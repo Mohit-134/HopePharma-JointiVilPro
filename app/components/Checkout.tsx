@@ -2,7 +2,6 @@
 import { useEffect, useReducer, useState } from "react";
 import PackageForm from "./PackageForm";
 import UserDetailsForm from "./UserDetailsForm";
-// import ShipmentDetailsForm from "./ShipmentDeatilsForm";
 import { Files, Lock } from "lucide-react";
 import PaymentContainer from "./PaymentContainer";
 import ShipmentDetailsForm from "./ShipmentDeatilsForm";
@@ -35,7 +34,7 @@ export default function Checkout() {
 
 
   type State = typeof initialState;
-  
+
   type Action =
     | { type: "UPDATE_PACKAGE"; payload: Partial<State["package"]> }
     | { type: "UPDATE_USER"; payload: Partial<State["user"]> }
@@ -66,13 +65,33 @@ export default function Checkout() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
 
+  const [validationState, setValidationState] = useState({
+    package: true, //  package is always valid 
+    user: false,
+    shipment: false
+  });
 
+ 
+
+  // Track if all forms are valid
+  const allFormsValid = validationState.package && validationState.user && validationState.shipment;
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
   }
-  useEffect(() => {
+
+    const updateValidation = (form: keyof typeof validationState, isValid: boolean) => {
+    setValidationState(prev => ({
+      ...prev,
+      [form]: isValid
+    }));
+  };
+
+ useEffect(() => {
     console.log("data", state);
-  }, [state]);
+    console.log("validation state", validationState);
+    console.log("all forms valid", allFormsValid);
+  }, [state, validationState, allFormsValid]);
+
 
   return (
     <div className=""
@@ -89,11 +108,13 @@ export default function Checkout() {
           <UserDetailsForm
             data={state.user}
             updateFields={(fields) => { dispatch({ type: "UPDATE_USER", payload: fields }) }}
+            onValidationChange={(isValid) => updateValidation('user', isValid)}
           ></UserDetailsForm>
 
           <ShipmentDetailsForm
             data={state.shipment}
             updateFields={(fields) => { dispatch({ type: "UPDATE_SHIPMENT", payload: fields }) }}
+            onValidationChange={(isValid) => updateValidation('shipment', isValid)}
           ></ShipmentDetailsForm>
 
         </div>
@@ -102,11 +123,12 @@ export default function Checkout() {
             package={state.package}
             user={state.user}
             shipment={state.shipment}
+            shouldUpdateSession={allFormsValid}
           />
-          {/* <div className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center">
+          <div className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center">
             <p className="font-bold">COMPLETE PURCHASE</p>
             <p>TRY IT RISK FREE! - 90 DAY MONEY BACK GUARANTEE!</p>
-          </div> */}
+          </div>
           <p className="text-[#67697EE6]  text-[13px] text-center p-4">By completing the payment, the client is in agreement with our Terms of Service and Refund Policy.</p>
           <img className="w-[70%]  mx-auto" src="./images/payment-gateway.webp"></img>
           <p className="flex gap-2 mx-auto justify-center my-6 text-[#303030] text-[13px] items-center"> <Lock color="#f7ef02" /> Secure 256-bit SSL encryption  </p>

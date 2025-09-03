@@ -11,11 +11,21 @@ type ShipmentDetailsFormProps = {
     postcode: string;
   };
   updateFields: (fields: any) => void;
+  onValidationChange: (isValid: boolean) => void;
 };
+
+type ShipmentDeatilsFormType = {
+  country: string;
+  address: string;
+  city: string;
+  state: string;
+  postcode: string;
+}
 
 export default function ShipmentDetailsForm({
   data,
   updateFields,
+  onValidationChange
 }: ShipmentDetailsFormProps) {
   const [countries, setCountries] = useState<ICountry[]>([]);
   const [states, setStates] = useState<IState[]>([]);
@@ -34,6 +44,50 @@ export default function ShipmentDetailsForm({
     const allCountries = Country.getAllCountries();
     setCountries(allCountries);
   }, []);
+
+
+  const validate = (): boolean => {
+    const newErrors: Partial<Record<keyof ShipmentDeatilsFormType, string>> = {};
+
+    if (!data.country.trim()) {
+      newErrors.country = "Country is required";
+    }
+
+    if (!data.address.trim()) {
+      newErrors.address = "Address is required";
+    }
+
+    if (!data.city.trim()) {
+      newErrors.city = "City is required";
+    }
+
+    if (!data.state.trim()) {
+      newErrors.state = "State is required";
+    }
+
+    if (!data.postcode.trim()) {
+      newErrors.postcode = "Postcode is required";
+    }
+
+    setErrors(newErrors);
+    const isValid = Object.keys(newErrors).length === 0;
+
+    // Notify parent about validation state
+    onValidationChange(isValid);
+
+    return isValid;
+  };
+
+  // Run validation whenever data changes
+  // useEffect(() => {
+  //   validate();
+  // }, [data])
+  useEffect(() => {
+    const hasTouchedAnyField = Object.values(touched).some((t) => t);
+    if (hasTouchedAnyField) {
+      validate();
+    }
+  }, [data, touched]);
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const countryIsoCode = e.target.value;
@@ -111,14 +165,14 @@ export default function ShipmentDetailsForm({
       <p>STEP 3: SHIPPING INFORMATION</p>
       <form className="flex flex-col gap-4 w-full">
         {/* Country */}
-        <div>
+        <div className="">
           <select
             id="country"
             name="country"
             value={data.country}
             onChange={handleCountryChange}
             onBlur={() => handleBlur("country")}
-            className="border border-solid p-2"
+            className="border border-solid p-2 w-[100%]"
             style={{ borderColor: errors.country ? "red" : undefined }}
           >
             <option value="">Select Country</option>
@@ -136,7 +190,7 @@ export default function ShipmentDetailsForm({
         {/* Address */}
         <div>
           <input
-            className="border border-solid p-2 rounded-sm "
+            className="border border-solid p-2 rounded-sm w-[100%] "
             type="text"
             id="address"
             name="address"
@@ -154,14 +208,14 @@ export default function ShipmentDetailsForm({
         {/* Row: state, postcode, city */}
         <div className="flex flex-row gap-1 rounded-sm justify-between ">
           {/* State */}
-          <div className="flex-1">
+          <div className="">
             <select
               id="state"
               name="state"
               value={data.state}
               onChange={handleStateChange}
               onBlur={() => handleBlur("state")}
-              className="border border-solid px-2 rounded-sm w-full"
+              className="border border-solid px-2 rounded-sm w-full h-full"
               style={{ borderColor: errors.state ? "red" : undefined }}
             >
               <option value="">State/Province*</option>

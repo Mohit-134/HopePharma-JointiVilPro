@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
     const { expeditedShipping, price = 0, selectedBundleId } = pkg;
 
     const productAmount = price; // Should already be discounted total
-    const shippingCost = expeditedShipping ? 1500 : 500;
-    const totalAmount = productAmount + shippingCost; // Always positive
+    const shippingCost = expeditedShipping ? 1000 : 0; // 10 dollar in cents
+    const totalAmount = productAmount + shippingCost; 
 
     const orderId = `ORDER-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const customerId = `CUSTOMER-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
 
     console.log(" Payload:", JSON.stringify(payload, null, 2));
 
-    const res = await fetch("https://api.sandbox.primer.io/client-session", {
+    const res = await fetch(`${process.env.PRIMER_URL}/client-session`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

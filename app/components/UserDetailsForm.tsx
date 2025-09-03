@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomInput } from "./CustomInput";
 
 type UserDetailsFormType = {
@@ -11,15 +11,16 @@ type UserDetailsFormType = {
 interface UserDetailsFormProps {
   data: UserDetailsFormType;
   updateFields: (fields: Partial<UserDetailsFormType>) => void;
-  onNext?: () => void;
+  onValidationChange: (isValid: boolean) => void; 
 }
 
-export default function UserDetailsForm({ data, updateFields, onNext }: UserDetailsFormProps) {
+
+export default function UserDetailsForm({ data, updateFields, onValidationChange }: UserDetailsFormProps) {
   const [errors, setErrors] = useState<Partial<Record<keyof UserDetailsFormType, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof UserDetailsFormType, boolean>>>({});
 
-  // Basic validation function
-  const validate = () => {
+
+ const validate = (): boolean => {
     const newErrors: Partial<Record<keyof UserDetailsFormType, string>> = {};
 
     if (!data.name.trim()) {
@@ -43,9 +44,25 @@ export default function UserDetailsForm({ data, updateFields, onNext }: UserDeta
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const isValid = Object.keys(newErrors).length === 0;
+    
+    // Notify parent about validation state
+    onValidationChange(isValid);
+    
+    return isValid;
   };
 
+  // Run validation whenever data changes
+  // useEffect(() => {
+  //   validate();
+  // },[data])
+
+   useEffect(() => {
+      const hasTouchedAnyField = Object.values(touched).some((t) => t);
+      if (hasTouchedAnyField) {
+        validate();
+      }
+    }, [data, touched]);
   // Validate specific field
   const validateField = (field: keyof UserDetailsFormType) => {
     const newErrors = { ...errors };
@@ -88,14 +105,11 @@ export default function UserDetailsForm({ data, updateFields, onNext }: UserDeta
     setErrors(newErrors);
   };
 
-  const handleSubmit = () => {
-    // Mark all fields as touched
-    setTouched({ name: true, surname: true, email: true, phone: true });
+  // const handleSubmit = () => {
+  //   // Mark all fields as touched
+  //   setTouched({ name: true, surname: true, email: true, phone: true });
     
-    if (validate()) {
-      onNext && onNext();
-    }
-  };
+  // };
 
   const handleChange = (field: keyof UserDetailsFormType, value: string) => {
     updateFields({ [field]: value });

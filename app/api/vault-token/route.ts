@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
         const { paymentId } = await req.json();
         console.log("PaymentID :", paymentId);
 
-        const response = await fetch(`https://api.sandbox.primer.io/payments/${paymentId}`, {
+        const response = await fetch(`${process.env.PRIMER_URL}/payments/${paymentId}`, {
             method: 'GET',
             headers: {
                 'X-API-KEY':  process.env.PRIMER_API_KEY!,

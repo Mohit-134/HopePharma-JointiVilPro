@@ -122,7 +122,7 @@ export async function PATCH(req: Request) {
 
     console.log('🔄 Updating client session with:', JSON.stringify(updatePayload, null, 2));
 
-    const response = await fetch('https://api.sandbox.primer.io/client-session', {
+    const response = await fetch(`${process.env.PRIMER_URL}/client-session`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

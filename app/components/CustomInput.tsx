@@ -1,8 +1,6 @@
-// // CustomInput.tsx
 import React, { forwardRef } from "react";
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  // optional now
   required?: boolean;
 }
 

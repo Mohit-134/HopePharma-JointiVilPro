@@ -10,35 +10,18 @@ const PaymentContainer = (props: any) => {
     const [error, setError] = useState("")
     const [paymentStatus, setPaymentStatus] = useState("");
     const primerInitialized = useRef(false);
+
     const {
         package: packageData,
         user,
-        shipment,
+        shipment,    
     } = props;
 
-    const {
-        expeditedShipping,
-        price,
-        quantity,
-        selectedBundleId,
-        originalPrice,
-    } = packageData;
+    
 
-    const {
-        name,
-        surname,
-        email,
-        phone,
-    } = user;
 
-    const {
-        country,
-        city,
-        address,
-        state,
-        postcode
-    } = shipment;
-
+    const {shouldUpdateSession } = props
+    console.log(shouldUpdateSession, 'payment container')  
 
     // fetch client token
     useEffect(() => {
@@ -97,7 +80,10 @@ const PaymentContainer = (props: any) => {
 
     // update client session
     useEffect(() => {
-        console.log("🔄 Detected changes, preparing to update client session... :", packageData);
+        if (!shouldUpdateSession || !clientToken) {
+            console.log("⏸️ Skipping session update - forms not valid or no token");
+            return;
+        }
         if (!clientToken) return;
         const timeout = setTimeout(() => {
             const updateClientSession = async () => {
@@ -143,20 +129,7 @@ const PaymentContainer = (props: any) => {
         }, 200);
 
         return () => clearTimeout(timeout);
-    }, [
-        expeditedShipping,
-        price,
-        name,
-        surname,
-        email,
-        phone,
-        country,
-        city,
-        state,
-        address,
-        postcode,
-        clientToken
-    ]);
+    }, [shouldUpdateSession]);
 
 
     const initializePrimer = async (token: string) => {
@@ -167,7 +140,7 @@ const PaymentContainer = (props: any) => {
 
         try {
             const container = document.getElementById('primer-checkout-container');
-              
+
 
             if (!(container instanceof HTMLElement)) {
                 console.error('❌ Invalid container element');
@@ -234,7 +207,7 @@ const PaymentContainer = (props: any) => {
 
                 paymentHandling: 'AUTO'
             });
-          
+
 
             primerInitialized.current = true;
             console.log('✅ Primer initialized successfully');

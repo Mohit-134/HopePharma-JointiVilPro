@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
         console.log("🛒 Sending to Primer:", JSON.stringify(payload, null, 2));
 
-        const paymentResponse = await fetch('https://api.sandbox.primer.io/payments', {
+        const paymentResponse = await fetch(`${process.env.PRIMER_URL}/payments`, {
             method: 'POST',
             headers: {
                 'X-API-KEY':  process.env.PRIMER_API_KEY!,
@@ -30,7 +30,8 @@ export async function POST(request: NextRequest) {
 
         const paymentResult = await paymentResponse.json();
 
-        if (paymentResponse.ok && paymentResult.status === 'SETTLED') {
+        // if (paymentResponse.ok && paymentResult.status === 'SETTLED') {
+            if(paymentResponse.ok){
             return NextResponse.json({
                 success: true,
                 paymentId: paymentResult.id,
