@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react'
-import { Primer } from "@primer-io/checkout-web"
+import { Primer, PrimerCheckout } from "@primer-io/checkout-web"
 import { useRouter } from 'next/navigation';
 
 const PaymentContainer = (props: any) => {
@@ -10,18 +10,25 @@ const PaymentContainer = (props: any) => {
     const [error, setError] = useState("")
     const [paymentStatus, setPaymentStatus] = useState("");
     const primerInitialized = useRef(false);
+    const checkoutRef = useRef<PrimerCheckout | null>(null);
 
     const {
         package: packageData,
         user,
-        shipment,    
+        shipment,
     } = props;
 
-    
+    const { shouldUpdateSession } = props
+    console.log(shouldUpdateSession, 'payment container')
 
-
-    const {shouldUpdateSession } = props
-    console.log(shouldUpdateSession, 'payment container')  
+    const handleCustomButtonClick = () => {
+        console.log('clicked custom button')
+        if (checkoutRef.current && shouldUpdateSession) {
+            checkoutRef.current.submit();
+        } else {
+            console.log('Checkout reference not available');
+        }
+    };
 
     // fetch client token
     useEffect(() => {
@@ -46,7 +53,7 @@ const PaymentContainer = (props: any) => {
                     setLoading(false);
                     setClientToken(data.token);
                 } else {
-                    setLoading(false); // ✅ Set loading false on error
+                    setLoading(false);
                     setError(data.error || 'Failed to fetch token');
                 }
             } catch (error) {
@@ -111,7 +118,6 @@ const PaymentContainer = (props: any) => {
                         console.log("✅ Client session updated:", data.clientSession);
                     }
 
-
                 } catch (error) {
                     if (error instanceof Error) {
                         setError(`Error fetching token: ${error.message}`);
@@ -131,7 +137,6 @@ const PaymentContainer = (props: any) => {
         return () => clearTimeout(timeout);
     }, [shouldUpdateSession]);
 
-
     const initializePrimer = async (token: string) => {
         if (primerInitialized.current) {
             console.log("Primer already initialized");
@@ -140,7 +145,6 @@ const PaymentContainer = (props: any) => {
 
         try {
             const container = document.getElementById('primer-checkout-container');
-
 
             if (!(container instanceof HTMLElement)) {
                 console.error('❌ Invalid container element');
@@ -152,6 +156,9 @@ const PaymentContainer = (props: any) => {
 
             const checkout = await Primer.showUniversalCheckout(token, {
                 container: "#primer-checkout-container",
+                submitButton: {
+                    useBuiltInButton: false
+                },
 
                 onCheckoutFail: (error, checkoutPaymentMethod) => {
                     console.error('❌ Primer checkout failed:', error);
@@ -165,7 +172,6 @@ const PaymentContainer = (props: any) => {
                     setError('Payment was cancelled or interrupted');
                 },
 
-                // Updated: Handle checkout completion with improved vault token handling
                 onCheckoutComplete: (checkoutPaymentMethod: any) => {
                     console.log('✅ Checkout completed:', checkoutPaymentMethod);
 
@@ -173,7 +179,6 @@ const PaymentContainer = (props: any) => {
                     const paymentId = checkoutPaymentMethod?.payment?.id;
 
                     if (vaultToken && checkoutPaymentMethod?.paymentMethod?.isVaulted) {
-                        // Store immediately if vault token is available
                         const vaultData = {
                             paymentMethodToken: vaultToken,
                             customerId: checkoutPaymentMethod?.payment?.customerId || 'CUSTOMER-DEFAULT',
@@ -189,7 +194,6 @@ const PaymentContainer = (props: any) => {
                         localStorage.setItem('vaultData', JSON.stringify(vaultData));
                         console.log('🏦 VAULT TOKEN STORED IMMEDIATELY:', vaultToken);
                     } else if (paymentId) {
-                        // Fallback to your existing method
                         fetchPaymentDetails(paymentId);
                     }
 
@@ -197,7 +201,7 @@ const PaymentContainer = (props: any) => {
                     setTimeout(() => {
                         console.log('Payment flow completed - redirecting to upsell');
                         router.push('/upsell');
-                    }, 2000);
+                    }, 1000);
                 },
 
                 onPaymentMethodAction: (paymentMethodAction) => {
@@ -208,17 +212,16 @@ const PaymentContainer = (props: any) => {
                 paymentHandling: 'AUTO'
             });
 
-
+            // Store checkout reference
+            checkoutRef.current = checkout;
             primerInitialized.current = true;
             console.log('✅ Primer initialized successfully');
-
 
         } catch (err) {
             console.error('❌ Primer initialization error:', err);
             setError(`Error while initializing Primer: ${err}`);
         }
     };
-
 
     const fetchPaymentDetails = async (paymentId: string) => {
         try {
@@ -235,7 +238,6 @@ const PaymentContainer = (props: any) => {
                 const vaultData = {
                     paymentMethodToken: payment.paymentMethod.paymentMethodToken,
                     customerId: payment.customerId,
-
                     cardDetails: {
                         last4: payment.paymentMethod.paymentMethodData.last4Digits,
                         brand: payment.paymentMethod.paymentMethodData.network,
@@ -254,7 +256,6 @@ const PaymentContainer = (props: any) => {
         }
     };
 
-
     if (isLoading) {
         return (
             <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
@@ -265,7 +266,6 @@ const PaymentContainer = (props: any) => {
             </div>
         );
     }
-
 
     if (error && !clientToken) {
         return (
@@ -284,7 +284,7 @@ const PaymentContainer = (props: any) => {
     }
 
     return (
-        <div className='w-full text-center '>
+        <div className='w-full text-center'>
             <div id="primer-checkout-container" className="mb-6 min-h-[200px]">
                 {!clientToken ? (
                     <div className="text-center text-gray-500 py-8">
@@ -292,8 +292,20 @@ const PaymentContainer = (props: any) => {
                     </div>
                 ) : null}
             </div>
+
+            {/* Submit button - only show when clientToken is available */}
+            {clientToken && (
+                <button
+                    onClick={handleCustomButtonClick}
+                    className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center hover:bg-[#ffdb28] transition-colors"
+                >
+                    <p className="font-bold">COMPLETE PURCHASE</p>
+                    <p>TRY IT RISK FREE! - 90 DAY MONEY BACK GUARANTEE!</p>
+                </button>
+            )}
+
         </div>
-    )
+    );
 }
 
 export default PaymentContainer

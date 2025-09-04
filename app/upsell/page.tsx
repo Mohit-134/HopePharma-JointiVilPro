@@ -76,7 +76,7 @@ const UpsellPage = () => {
 
                 setTimeout(() => {
                     router.push('/thank-you');
-                }, 2000);
+                }, 500);
             } else {
                 setError(`Payment failed: ${result.error || 'Unknown error'}`);
                 console.error('❌ One-click payment failed:', result);

@@ -125,10 +125,10 @@ export default function Checkout() {
             shipment={state.shipment}
             shouldUpdateSession={allFormsValid}
           />
-          <div className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center">
+          {/* <div className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center">
             <p className="font-bold">COMPLETE PURCHASE</p>
             <p>TRY IT RISK FREE! - 90 DAY MONEY BACK GUARANTEE!</p>
-          </div>
+          </div> */}
           <p className="text-[#67697EE6]  text-[13px] text-center p-4">By completing the payment, the client is in agreement with our Terms of Service and Refund Policy.</p>
           <img className="w-[70%]  mx-auto" src="./images/payment-gateway.webp"></img>
           <p className="flex gap-2 mx-auto justify-center my-6 text-[#303030] text-[13px] items-center"> <Lock color="#f7ef02" /> Secure 256-bit SSL encryption  </p>
