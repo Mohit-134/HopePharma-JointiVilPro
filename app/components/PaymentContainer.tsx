@@ -10,6 +10,7 @@ const PaymentContainer = (props: any) => {
     const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState("")
     const [paymentStatus, setPaymentStatus] = useState("");
+    const [iframeUrl, setIframeUrl] = useState<string | null>(null); // 🧩 Added for iframe display
     const primerInitialized = useRef(false);
     const checkoutRef = useRef<PrimerCheckout | null>(null);
 
@@ -22,143 +23,84 @@ const PaymentContainer = (props: any) => {
     const { shouldUpdateSession } = props
     console.log(shouldUpdateSession, 'payment container')
 
-    // const handleCustomButtonClick = () => {
-    //     console.log('clicked custom button')
-    //     // if (checkoutRef.current && shouldUpdateSession) {
-    //     //     checkoutRef.current.submit();
-    //     // } else {
-    //     //     console.log('Checkout reference not available');
-    //     // }
-    // };
 
+    const handleCustomButtonClick = async () => {
+        console.log('clicked custom button');
+        setLoading(true);
 
+        // 🧾 Order + Merchant details
+        const order_number = "order-1234";
+        const order_amount = packageData.price;
+        const order_currency = "USD";
+        const order_description = "Important gift";
+        const merchant_pass = "9e7d01b8a2ce585c1108432aa102b489";
 
-const handleCustomButtonClick = async () => {
-    console.log('clicked custom button');
+        const to_md5 = (order_number + order_amount + order_currency + order_description + merchant_pass).toUpperCase();
+        const md5Hash = CryptoJS.MD5(to_md5).toString();
+        const sha1Hash = CryptoJS.SHA1(md5Hash).toString(CryptoJS.enc.Hex);
 
-    // 🧾 Order + Merchant details
-    const order_number = "order-1234";
-    const order_amount = "10.00";
-    const order_currency = "USD";
-    const order_description = "Important gift";
-    const merchant_pass = "9e7d01b8a2ce585c1108432aa102b489";
+        console.log('Generated session hash:', sha1Hash);
 
-    const to_md5 = (order_number + order_amount + order_currency + order_description + merchant_pass).toUpperCase();
-    const md5Hash = CryptoJS.MD5(to_md5).toString();
-    const sha1Hash = CryptoJS.SHA1(md5Hash).toString(CryptoJS.enc.Hex);
+        // 📦 Build payload (updated)
+        const payload = {
+            merchant_key: "eb515e92-a819-11f0-95c8-ae0005bd273e",
+            operation: "purchase",
+            methods: ["card"],
+            order: {
+                number: order_number,
+                amount: order_amount,
+                currency: order_currency,
+                description: order_description
+            },
+            cancel_url: "https://hopepharma-fortivir-production.up.railway.app/",
+            success_url: "http://localhost:3000/upsell",
+            customer: {
+                name: "Moussa Nasreddine",
+                email: "moussanasreddine@gmail.com"
+            },
+            billing_address: {
+                country: "US",
+                state: "CA",
+                city: "Los Angeles",
+                address: "Moor Building 35274",
+                zip: "123456",
+                phone: "347771112233"
+            },
+            recurring_init: "true",
+            req_token: "true",
+            hash: sha1Hash
+        };
 
-    console.log('Generated session hash:', sha1Hash);
+        try {
+            const response = await fetch('/api/create-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
 
-    // 📦 Build payload (updated)
-    const payload = {
-        merchant_key: "eb515e92-a819-11f0-95c8-ae0005bd273e",
-        operation: "purchase",
-        methods: ["card"],
-        order: {
-            number: order_number,
-            amount: order_amount,
-            currency: order_currency,
-            description: order_description
-        },
-        cancel_url: "https://hopepharma-fortivir-production.up.railway.app/",
-        success_url: "https://hopepharma-fortivir-production.up.railway.app/upsell",
-        customer: {
-            name: "Moussa Nasreddine",
-            email: "moussanasreddine@gmail.com"
-        },
-        billing_address: {
-            country: "US",
-            state: "CA",
-            city: "Los Angeles",
-            address: "Moor Building 35274",
-            zip: "123456",
-            phone: "347771112233"
-        },
-        recurring_init: "true",
-        req_token :"true",
-        hash: sha1Hash
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('✅ Session created successfully:', data);
+
+            // ✅ Instead of redirecting, show the payment URL in an iframe
+            if (data.redirect_url) {
+                setIframeUrl(data.redirect_url);
+            } else {
+                console.error("No redirect_url found in API response.");
+            }
+
+        } catch (error) {
+            console.error('❌ Error creating session:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    try {
-        const response = await fetch('/api/create-session', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
 
-        if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('✅ Session created successfully:', data);
-
-        // Optional redirect if API returns redirect_url
-        if (data.redirect_url) {
-            window.location.href = data.redirect_url;
-        }
-
-    } catch (error) {
-        console.error('❌ Error creating session:', error);
-    }
-};
-
-    // fetch client token
-    useEffect(() => {
-        const fetchtoken = async () => {
-            setError("");
-            setLoading(true);
-            try {
-                const res = await fetch('/api/client-token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        user,
-                        shipment,
-                        package: packageData,
-                    })
-                });
-
-                const data = await res.json();
-                if (res.ok && data.token) {
-                    setLoading(false);
-                    setClientToken(data.token);
-                } else {
-                    setLoading(false);
-                    setError(data.error || 'Failed to fetch token');
-                }
-            } catch (error) {
-                if (error instanceof Error) {
-                    setError(`Error fetching token: ${error.message}`);
-                } else if (typeof error === 'string') {
-                    setError(`Error fetching token: ${error}`);
-                } else {
-                    setError(`Error fetching token: An unknown error occurred`);
-                }
-                setLoading(false);
-            }
-        }
-        fetchtoken();
-    }, []);
-
-    //initialize primer 
-    useEffect(() => {
-        if (clientToken && !primerInitialized.current) {
-            console.log('🔄 Token available, initializing Primer...');
-
-            // Small delay to ensure DOM is fully rendered
-            const timer = setTimeout(() => {
-                initializePrimer(clientToken);
-            }, 100);
-
-            // Cleanup timer if component unmounts
-            return () => clearTimeout(timer);
-        }
-    }, [clientToken]);
-
-    // update client session
+    // 🧠 Session update logic (unchanged)
     useEffect(() => {
         if (!shouldUpdateSession || !clientToken) {
             console.log("⏸️ Skipping session update - forms not valid or no token");
@@ -210,92 +152,8 @@ const handleCustomButtonClick = async () => {
         return () => clearTimeout(timeout);
     }, [shouldUpdateSession]);
 
-    const initializePrimer = async (token: string) => {
-        if (primerInitialized.current) {
-            console.log("Primer already initialized");
-            return;
-        }
 
-        try {
-            const container = document.getElementById('primer-checkout-container');
-
-            if (!(container instanceof HTMLElement)) {
-                console.error('❌ Invalid container element');
-                setError('Payment form container not found or invalid');
-                return;
-            }
-
-            console.log('🚀 Initializing Primer with token:', token.substring(0, 20) + '...');
-
-            const checkout = await Primer.showUniversalCheckout(token, {
-                container: "#primer-checkout-container",
-                submitButton: {
-                    useBuiltInButton: false
-                },
-
-                onCheckoutFail: (error, checkoutPaymentMethod) => {
-                    console.error('❌ Primer checkout failed:', error);
-                    setError('Payment processing error: ' + error.message);
-                    setPaymentStatus('');
-                },
-
-                onResumeError: (error) => {
-                    console.log('ℹ️ Checkout dismissed by user or resume error:', error);
-                    setPaymentStatus('');
-                    setError('Payment was cancelled or interrupted');
-                },
-
-                onCheckoutComplete: (checkoutPaymentMethod: any) => {
-                    console.log('✅ Checkout completed:', checkoutPaymentMethod);
-
-                    const vaultToken = checkoutPaymentMethod?.paymentMethod?.paymentMethodToken;
-                    const paymentId = checkoutPaymentMethod?.payment?.id;
-
-                    if (vaultToken && checkoutPaymentMethod?.paymentMethod?.isVaulted) {
-                        const vaultData = {
-                            paymentMethodToken: vaultToken,
-                            customerId: checkoutPaymentMethod?.payment?.customerId || 'CUSTOMER-DEFAULT',
-                            cardDetails: {
-                                last4: checkoutPaymentMethod?.paymentMethod?.last4Digits || 'Unknown',
-                                brand: checkoutPaymentMethod?.paymentMethod?.network || 'Unknown',
-                                expiryMonth: checkoutPaymentMethod?.paymentMethod?.expirationMonth || '',
-                                expiryYear: checkoutPaymentMethod?.paymentMethod?.expirationYear || '',
-                                cardholderName: checkoutPaymentMethod?.paymentMethod?.cardholderName || ''
-                            },
-                            timestamp: Date.now()
-                        };
-                        localStorage.setItem('vaultData', JSON.stringify(vaultData));
-                        console.log('🏦 VAULT TOKEN STORED IMMEDIATELY:', vaultToken);
-                    } else if (paymentId) {
-                        fetchPaymentDetails(paymentId);
-                    }
-
-                    setPaymentStatus('Checkout completed successfully!');
-                    setTimeout(() => {
-                        console.log('Payment flow completed - redirecting to upsell');
-                        router.push('/upsell');
-                    }, 1000);
-                },
-
-                onPaymentMethodAction: (paymentMethodAction) => {
-                    console.log('🔄 Payment method action required:', paymentMethodAction);
-                    setPaymentStatus('Additional verification required...');
-                },
-
-                paymentHandling: 'AUTO'
-            });
-
-            // Store checkout reference
-            checkoutRef.current = checkout;
-            primerInitialized.current = true;
-            console.log('✅ Primer initialized successfully');
-
-        } catch (err) {
-            console.error('❌ Primer initialization error:', err);
-            setError(`Error while initializing Primer: ${err}`);
-        }
-    };
-
+    // 🔧 Helper: Fetch payment details (unchanged)
     const fetchPaymentDetails = async (paymentId: string) => {
         try {
             const response = await fetch(`/api/vault-token`, {
@@ -329,6 +187,7 @@ const handleCustomButtonClick = async () => {
         }
     };
 
+
     if (isLoading) {
         return (
             <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
@@ -358,16 +217,8 @@ const handleCustomButtonClick = async () => {
 
     return (
         <div className='w-full text-center'>
-            {/* <div id="primer-checkout-container" className="mb-6 min-h-[200px]">
-                {!clientToken ? (
-                    <div className="text-center text-gray-500 py-8">
-                        Initializing payment form...
-                    </div>
-                ) : null}
-            </div> */}
-
-            {/* Submit button - only show when clientToken is available */}
-            {clientToken && (
+            {/* Payment button (unchanged) */}
+            {!iframeUrl && (
                 <button
                     onClick={handleCustomButtonClick}
                     className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center hover:bg-[#ffdb28] transition-colors"
@@ -377,8 +228,20 @@ const handleCustomButtonClick = async () => {
                 </button>
             )}
 
+            {/* 🧩 Payment iframe (only shows when redirect_url exists) */}
+            {iframeUrl && (
+                <div className="mt-6">
+                    <iframe
+                        src={iframeUrl}
+                        width="100%"
+                        height="750"
+                        className="border rounded-lg shadow-md"
+                        allow="payment *; fullscreen"
+                    />
+                </div>
+            )}
         </div>
     );
 }
 
-export default PaymentContainer
+export default PaymentContainer;

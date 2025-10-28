@@ -11,11 +11,11 @@ export default function Checkout() {
 
   const initialState = {
     package: {
-      selectedBundleId: 1,
-      price: 3318,
+      selectedBundleId: 3,
+      price: 199.99,
       expeditedShipping: false,
-      originalPrice: 49783,
-      quantity: 5,
+      originalPrice: 19913,
+      quantity: 2,
     },
     user: {
       name: "",
