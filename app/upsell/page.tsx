@@ -95,7 +95,7 @@ const UpsellPage = () => {
     
         // 🧾 Order + Merchant details
         const order_number = "order-1234";
-        const order_amount = "10.00";
+        const order_amount = "39.99";
         const order_currency = "USD";
         const order_description = "Important gift";
         const merchant_pass = "9e7d01b8a2ce585c1108432aa102b489";
@@ -117,8 +117,8 @@ const UpsellPage = () => {
                 currency: order_currency,
                 description: order_description
             },
-            cancel_url: "https://hopepharma-fortivir-production.up.railway.app/",
-            success_url: "https://hopepharma-fortivir-production.up.railway.app/upsell",
+            cancel_url: "https://hopepharma-jointivilpro-production.up.railway.app/",
+            success_url: "https://hopepharma-jointivilpro-production.up.railway.app/thank-you",
             customer: {
                 name: "Moussa Nasreddine",
                 email: "moussanasreddine@gmail.com"

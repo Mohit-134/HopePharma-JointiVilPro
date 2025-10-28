@@ -52,8 +52,8 @@ const PaymentContainer = (props: any) => {
                 currency: order_currency,
                 description: order_description
             },
-            cancel_url: "https://hopepharma-fortivir-production.up.railway.app/",
-            success_url: "http://localhost:3000/upsell",
+            cancel_url: "https://hopepharma-jointivilpro-production.up.railway.app/",
+            success_url: "https://hopepharma-jointivilpro-production.up.railway.app/upsell",
             customer: {
                 name: "Moussa Nasreddine",
                 email: "moussanasreddine@gmail.com"
