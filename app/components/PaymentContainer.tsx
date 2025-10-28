@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Primer, PrimerCheckout } from "@primer-io/checkout-web"
 import { useRouter } from 'next/navigation';
+import CryptoJS from 'crypto-js';
 
 const PaymentContainer = (props: any) => {
     const router = useRouter();
@@ -21,14 +22,86 @@ const PaymentContainer = (props: any) => {
     const { shouldUpdateSession } = props
     console.log(shouldUpdateSession, 'payment container')
 
-    const handleCustomButtonClick = () => {
-        console.log('clicked custom button')
-        if (checkoutRef.current && shouldUpdateSession) {
-            checkoutRef.current.submit();
-        } else {
-            console.log('Checkout reference not available');
-        }
+    // const handleCustomButtonClick = () => {
+    //     console.log('clicked custom button')
+    //     // if (checkoutRef.current && shouldUpdateSession) {
+    //     //     checkoutRef.current.submit();
+    //     // } else {
+    //     //     console.log('Checkout reference not available');
+    //     // }
+    // };
+
+
+
+const handleCustomButtonClick = async () => {
+    console.log('clicked custom button');
+
+    // 🧾 Order + Merchant details
+    const order_number = "order-1234";
+    const order_amount = "10.00";
+    const order_currency = "USD";
+    const order_description = "Important gift";
+    const merchant_pass = "9e7d01b8a2ce585c1108432aa102b489";
+
+    const to_md5 = (order_number + order_amount + order_currency + order_description + merchant_pass).toUpperCase();
+    const md5Hash = CryptoJS.MD5(to_md5).toString();
+    const sha1Hash = CryptoJS.SHA1(md5Hash).toString(CryptoJS.enc.Hex);
+
+    console.log('Generated session hash:', sha1Hash);
+
+    // 📦 Build payload (updated)
+    const payload = {
+        merchant_key: "eb515e92-a819-11f0-95c8-ae0005bd273e",
+        operation: "purchase",
+        methods: ["card"],
+        order: {
+            number: order_number,
+            amount: order_amount,
+            currency: order_currency,
+            description: order_description
+        },
+        cancel_url: "https://hopepharma-fortivir-production.up.railway.app/",
+        success_url: "https://hopepharma-fortivir-production.up.railway.app/upsell",
+        customer: {
+            name: "Moussa Nasreddine",
+            email: "moussanasreddine@gmail.com"
+        },
+        billing_address: {
+            country: "US",
+            state: "CA",
+            city: "Los Angeles",
+            address: "Moor Building 35274",
+            zip: "123456",
+            phone: "347771112233"
+        },
+        recurring_init: "true",
+        req_token :"true",
+        hash: sha1Hash
     };
+
+    try {
+        const response = await fetch('/api/create-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Session created successfully:', data);
+
+        // Optional redirect if API returns redirect_url
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+        }
+
+    } catch (error) {
+        console.error('❌ Error creating session:', error);
+    }
+};
 
     // fetch client token
     useEffect(() => {
@@ -285,13 +358,13 @@ const PaymentContainer = (props: any) => {
 
     return (
         <div className='w-full text-center'>
-            <div id="primer-checkout-container" className="mb-6 min-h-[200px]">
+            {/* <div id="primer-checkout-container" className="mb-6 min-h-[200px]">
                 {!clientToken ? (
                     <div className="text-center text-gray-500 py-8">
                         Initializing payment form...
                     </div>
                 ) : null}
-            </div>
+            </div> */}
 
             {/* Submit button - only show when clientToken is available */}
             {clientToken && (

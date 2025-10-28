@@ -9,7 +9,8 @@ const Footer = () => {
         <h1>More Trusted Customer Reviews</h1>
       </div>
 
-      <div className="max-w-[1300px] mx-auto flex flex-wrap justify-center gap-x-2 gap-y-5">
+     {/* <div className="max-w-[1300px] mx-auto flex flex-wrap justify-center items-start gap-x-2 gap-y-5"> */}
+<div className="columns-[300px] space-y-4 max-w-[1300px] mx-auto ">
         {testimonials.map((testimonial, index) => (
           <Card
             key={index}

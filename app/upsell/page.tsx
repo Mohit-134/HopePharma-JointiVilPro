@@ -1,5 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react';
+import CryptoJS from 'crypto-js';
 import { useRouter } from 'next/navigation';
 import { upsellBundle } from '../constants/bundle';
 interface VaultData {
@@ -39,87 +40,156 @@ const UpsellPage = () => {
         }
     }, []);
 
-    const processOneClickPayment = async () => {
-        if (!vaultData?.paymentMethodToken) {
-            setError('No payment method available');
-            return;
-        }
+    // const processOneClickPayment = async () => {
+    //     if (!vaultData?.paymentMethodToken) {
+    //         setError('No payment method available');
+    //         return;
+    //     }
 
-        setIsProcessing(true);
-        setError('');
+    //     setIsProcessing(true);
+    //     setError('');
 
+    //     try {
+    //         const response = await fetch('/api/one-click-payment', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 paymentMethodToken: vaultData.paymentMethodToken,
+    //                 amount: price * quantity,
+    //                 currency: 'USD',
+    //                 orderId: `upsell_${Date.now()}`,
+    //                 customerId: vaultData.customerId,
+    //                 description: `Upsell: ${label}`,
+    //             }),
+    //         });
+
+    //         const result = await response.json();
+
+    //         if (response.ok && result.success) {
+    //             setSuccess('🎉 Upsell payment successful!');
+    //             console.log('✅ One-click payment completed:', result);
+
+    //             // Optional: Clear vault data after successful upsell
+    //             localStorage.removeItem('vaultData');
+    //             localStorage.setItem('upsellPackage', JSON.stringify(upsellBundle));
+
+    //             setTimeout(() => {
+    //                 router.push('/thank-you');
+    //             }, 500);
+    //         } else {
+    //             setError(`Payment failed: ${result.error || 'Unknown error'}`);
+    //             console.error('❌ One-click payment failed:', result);
+    //         }
+    //     } catch (err) {
+    //         console.error('❌ One-click payment error:', err);
+    //         setError('Payment processing failed');
+    //     } finally {
+    //         setIsProcessing(false);
+    //     }
+    // };
+
+    const handleCustomButtonClick = async () => {
+        console.log('clicked custom button');
+    
+        // 🧾 Order + Merchant details
+        const order_number = "order-1234";
+        const order_amount = "10.00";
+        const order_currency = "USD";
+        const order_description = "Important gift";
+        const merchant_pass = "9e7d01b8a2ce585c1108432aa102b489";
+    
+        const to_md5 = (order_number + order_amount + order_currency + order_description + merchant_pass).toUpperCase();
+        const md5Hash = CryptoJS.MD5(to_md5).toString();
+        const sha1Hash = CryptoJS.SHA1(md5Hash).toString(CryptoJS.enc.Hex);
+    
+        console.log('Generated session hash:', sha1Hash);
+    
+        // 📦 Build payload (updated)
+        const payload = {
+            merchant_key: "eb515e92-a819-11f0-95c8-ae0005bd273e",
+            operation: "purchase",
+            methods: ["card"],
+            order: {
+                number: order_number,
+                amount: order_amount,
+                currency: order_currency,
+                description: order_description
+            },
+            cancel_url: "https://hopepharma-fortivir-production.up.railway.app/",
+            success_url: "https://hopepharma-fortivir-production.up.railway.app/upsell",
+            customer: {
+                name: "Moussa Nasreddine",
+                email: "moussanasreddine@gmail.com"
+            },
+            billing_address: {
+                country: "US",
+                state: "CA",
+                city: "Los Angeles",
+                address: "Moor Building 35274",
+                zip: "123456",
+                phone: "347771112233"
+            },
+            recurring_init: "true",
+            card_token: "true",
+            hash: sha1Hash
+        };
+    
         try {
-            const response = await fetch('/api/one-click-payment', {
+            const response = await fetch('/api/create-session', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    paymentMethodToken: vaultData.paymentMethodToken,
-                    amount: price * quantity,
-                    currency: 'USD',
-                    orderId: `upsell_${Date.now()}`,
-                    customerId: vaultData.customerId,
-                    description: `Upsell: ${label}`,
-                }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
             });
-
-            const result = await response.json();
-
-            if (response.ok && result.success) {
-                setSuccess('🎉 Upsell payment successful!');
-                console.log('✅ One-click payment completed:', result);
-
-                // Optional: Clear vault data after successful upsell
-                localStorage.removeItem('vaultData');
-                localStorage.setItem('upsellPackage', JSON.stringify(upsellBundle));
-
-                setTimeout(() => {
-                    router.push('/thank-you');
-                }, 500);
-            } else {
-                setError(`Payment failed: ${result.error || 'Unknown error'}`);
-                console.error('❌ One-click payment failed:', result);
+    
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
             }
-        } catch (err) {
-            console.error('❌ One-click payment error:', err);
-            setError('Payment processing failed');
-        } finally {
-            setIsProcessing(false);
+    
+            const data = await response.json();
+            console.log('✅ Session created successfully:', data);
+    
+            // Optional redirect if API returns redirect_url
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            }
+    
+        } catch (error) {
+            console.error('❌ Error creating session:', error);
         }
     };
-
     const skipUpsell = () => {
         // Optional: Clear vault data when skipping
         localStorage.removeItem('vaultData');
         router.push('/thank-you');
     };
 
-    // If no vault data, show simplified version
-    if (!vaultData) {
-        return (
-            <div className="min-h-screen  flex items-center justify-center p-4">
-                <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg p-6 text-center">
-                    <h2 className="text-2xl font-bold mb-4">🎯 Special Offer!</h2>
-                    <p className="text-gray-600 mb-4">{label}</p>
+    // // If no vault data, show simplified version
+    // if (!vaultData) {
+    //     return (
+    //         <div className="min-h-screen  flex items-center justify-center p-4">
+    //             <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg p-6 text-center">
+    //                 <h2 className="text-2xl font-bold mb-4">🎯 Special Offer!</h2>
+    //                 <p className="text-gray-600 mb-4">{label}</p>
                    
 
-                    {error && (
-                        <div className="border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {error}
-                        </div>
-                    )}
+    //                 {error && (
+    //                     <div className="border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    //                         {error}
+    //                     </div>
+    //                 )}
 
-                    <button
-                        onClick={skipUpsell}
-                        className="w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-                    >
-                        Continue to Thank You Page
-                    </button>
-                </div>
-            </div>
-        );
-    }
+    //                 <button
+    //                     onClick={skipUpsell}
+    //                     className="w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+    //                 >
+    //                     Continue to Thank You Page
+    //                 </button>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="min-h-screen  ">
@@ -216,7 +286,8 @@ const UpsellPage = () => {
                 {/* Action Buttons */}
                 <div className="space-y-3 flex flex-col items-center ">
                     <button
-                        onClick={processOneClickPayment}
+                        // onClick={processOneClickPayment}
+                        onClick={handleCustomButtonClick}
                         disabled={isProcessing}
                         className={`text-white w-[60%] mx-auto max-w-[775px} h-[70px] font-semibold px-4 py-2 rounded flex items-center justify-center border cursor-pointer transition-opacity duration-200 ${isProcessing ? 'opacity-60 cursor-not-allowed' : ''
                             }`}

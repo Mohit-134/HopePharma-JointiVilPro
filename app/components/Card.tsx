@@ -9,7 +9,7 @@ type CardProps = {
 
 const Card = ({name, url, text }: CardProps) => {
   return (
-    <div className="w-[300px] rounded-lg flex flex-col items-start border[0px] shadow-lg   " >
+    <div className="w-[300px] rounded-lg flex flex-col items-start border[0px] shadow-lg  " >
         <img src={url} alt={text} className='bg-amber-200 rounded-xl' /> 
          <h2 className='flex justify-center text-xl font-semibold items-center gap-1.5 p-2'>{name}<Check color="#ffffff" className='bg-black rounded-full p-0 h-[20px] ' /> </h2>
       
@@ -17,14 +17,14 @@ const Card = ({name, url, text }: CardProps) => {
         {[...Array(5)].map((_, index) => (
           <li key={index}>
             <img
-              src="/images/star.png" // Assuming the image is in the public/images folder
+              src="/images/star.png" 
               alt="star"
               style={{ width: '15px', height: '15px' }}
             />
           </li>
         ))}
       </ul>
-      <p className='m-3 '>{text}</p>
+      <p className='m-3'>{text}</p>
      
     </div>
   );
