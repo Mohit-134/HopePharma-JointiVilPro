@@ -52,10 +52,7 @@ export default function UserDetailsForm({ data, updateFields, onValidationChange
     return isValid;
   };
 
-  // Run validation whenever data changes
-  // useEffect(() => {
-  //   validate();
-  // },[data])
+
 
    useEffect(() => {
       const hasTouchedAnyField = Object.values(touched).some((t) => t);
@@ -63,7 +60,7 @@ export default function UserDetailsForm({ data, updateFields, onValidationChange
         validate();
       }
     }, [data, touched]);
-  // Validate specific field
+
   const validateField = (field: keyof UserDetailsFormType) => {
     const newErrors = { ...errors };
     
@@ -132,7 +129,7 @@ export default function UserDetailsForm({ data, updateFields, onValidationChange
                      data.email.trim() && 
                      data.phone.trim();
 
-  return (<div className="space-y-4 mt-4">
+  return (<div className="space-y-4 mt-4" id = 'errorSection'>
       <p>STEP 2: YOUR DETAILS</p>
 
       {/* First Name */}

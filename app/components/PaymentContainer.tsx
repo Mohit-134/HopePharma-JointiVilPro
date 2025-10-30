@@ -4,13 +4,13 @@ import { Primer, PrimerCheckout } from "@primer-io/checkout-web"
 import { useRouter } from 'next/navigation';
 import CryptoJS from 'crypto-js';
 
+
 const PaymentContainer = (props: any) => {
     const router = useRouter();
     const [clientToken, setClientToken] = useState("");
     const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState("")
     const [paymentStatus, setPaymentStatus] = useState("");
-    const [iframeUrl, setIframeUrl] = useState<string | null>(null); // 🧩 Added for iframe display
     const primerInitialized = useRef(false);
     const checkoutRef = useRef<PrimerCheckout | null>(null);
 
@@ -21,19 +21,25 @@ const PaymentContainer = (props: any) => {
     } = props;
 
     const { shouldUpdateSession } = props
-    console.log(shouldUpdateSession, 'payment container')
+
 
 
     const handleCustomButtonClick = async () => {
+     
         console.log('clicked custom button');
+        
+        if(shouldUpdateSession === false){
+            document.getElementById('errorSection')?.scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
         setLoading(true);
 
-        // 🧾 Order + Merchant details
-        const order_number = "order-1234";
-        const order_amount = packageData.price;
+        const order_number = `ORDER-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const order_amount = packageData.price + (packageData.expeditedShipping ? 10.0 : 0.0);
+        console.log('Order Amount:', order_amount);
         const order_currency = "USD";
-        const order_description = "Important gift";
-        const merchant_pass = "9e7d01b8a2ce585c1108432aa102b489";
+        const order_description = "Jointivil Purchase";
+        const merchant_pass = process.env.NEXT_PUBLIC_MERCHANT_PASS;
 
         const to_md5 = (order_number + order_amount + order_currency + order_description + merchant_pass).toUpperCase();
         const md5Hash = CryptoJS.MD5(to_md5).toString();
@@ -43,7 +49,7 @@ const PaymentContainer = (props: any) => {
 
         // 📦 Build payload (updated)
         const payload = {
-            merchant_key: "eb515e92-a819-11f0-95c8-ae0005bd273e",
+            merchant_key: process.env.NEXT_PUBLIC_MERCHANT_KEY,
             operation: "purchase",
             methods: ["card"],
             order: {
@@ -52,25 +58,25 @@ const PaymentContainer = (props: any) => {
                 currency: order_currency,
                 description: order_description
             },
-            cancel_url: "https://hopepharma-jointivilpro-production.up.railway.app/",
-            success_url: "https://hopepharma-jointivilpro-production.up.railway.app/upsell",
+            cancel_url: process.env.NEXT_PUBLIC_BASE_URL,
+            success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/upsell`,
             customer: {
-                name: "Moussa Nasreddine",
-                email: "moussanasreddine@gmail.com"
+                name: user.name + " " + user.surname,
             },
             billing_address: {
-                country: "US",
-                state: "CA",
-                city: "Los Angeles",
-                address: "Moor Building 35274",
-                zip: "123456",
-                phone: "347771112233"
+                country: shipment.country || "",
+                state: shipment.state || "",
+                city: shipment.city || "",
+                address: shipment.address || "",
+                zip: shipment.postcode || "",
+                phone: user.phone || "",
             },
             recurring_init: "true",
             req_token: "true",
             hash: sha1Hash
         };
 
+        console.log('🔹 Payload for session creation:', payload);
         try {
             const response = await fetch('/api/create-session', {
                 method: 'POST',
@@ -87,7 +93,7 @@ const PaymentContainer = (props: any) => {
 
             // ✅ Instead of redirecting, show the payment URL in an iframe
             if (data.redirect_url) {
-                setIframeUrl(data.redirect_url);
+                window.location.href = data.redirect_url;
             } else {
                 console.error("No redirect_url found in API response.");
             }
@@ -218,7 +224,6 @@ const PaymentContainer = (props: any) => {
     return (
         <div className='w-full text-center'>
             {/* Payment button (unchanged) */}
-            {!iframeUrl && (
                 <button
                     onClick={handleCustomButtonClick}
                     className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center hover:bg-[#ffdb28] transition-colors"
@@ -226,20 +231,8 @@ const PaymentContainer = (props: any) => {
                     <p className="font-bold">COMPLETE PURCHASE</p>
                     <p>TRY IT RISK FREE! - 90 DAY MONEY BACK GUARANTEE!</p>
                 </button>
-            )}
 
-            {/* 🧩 Payment iframe (only shows when redirect_url exists) */}
-            {iframeUrl && (
-                <div className="mt-6">
-                    <iframe
-                        src={iframeUrl}
-                        width="100%"
-                        height="750"
-                        className="border rounded-lg shadow-md"
-                        allow="payment *; fullscreen"
-                    />
-                </div>
-            )}
+        
         </div>
     );
 }

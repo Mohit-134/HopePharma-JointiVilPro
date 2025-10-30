@@ -71,9 +71,7 @@ export default function Checkout() {
     shipment: false
   });
 
- 
 
-  // Track if all forms are valid
   const allFormsValid = validationState.package && validationState.user && validationState.shipment;
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -137,7 +135,7 @@ export default function Checkout() {
             <div className="col-span-4">
               <p className="text-[#303030] mb-1.5"><strong> 90 DAYS GUARANTEE</strong> </p>
               <p className="text-[#303030] text-[13px] tracking-tight">
-                If you are not completely thrilled with your FORTIVIR MAX - we are offering you a 90 day guarantee on all purchases. Simply contact our customer support for a full refund or replacement.</p>
+                If you are not completely thrilled with your jointiVil - we are offering you a 90 day guarantee on all purchases. Simply contact our customer support for a full refund or replacement.</p>
             </div>
           </div>
           {/* reviews */}
@@ -148,7 +146,7 @@ export default function Checkout() {
             <div className="relative bg-[#f0f2f5] p-4 rounded-lg col-span-9">
               <strong className="text-[#000000] text-[15px]">Ethan</strong>
               <p className="text-[#000000] text-[15px]">
-                fortivir has been a real life-changer for me! My performance has improved significantly, and I feel more confident in every aspect of my life. I’ve regained the energy and strength I was missing!
+               After using jointiVil for a few weeks, I've noticed a significant improvement in my joint flexibility and a reduction in pain. It's been a game-changer for my daily activities, and I feel more mobile than ever!
               </p>
 
               {/* Overlapping like count */}
@@ -165,7 +163,7 @@ export default function Checkout() {
             <div className="relative bg-[#f0f2f5] p-4 rounded-lg col-span-9">
               <strong className="text-[#000000] text-[15px]">Ethan</strong>
               <p className="text-[#000000] text-[15px]">
-                fortivir has been a real life-changer for me! My performance has improved significantly, and I feel more confident in every aspect of my life. I’ve regained the energy and strength I was missing!
+               JointiVil has helped ease the discomfort in my knees and joints. I'm now able to move with less pain, and my recovery after workouts is much faster. I highly recommend it to anyone dealing with joint issues!  
               </p>
 
               {/* Overlapping like count */}
