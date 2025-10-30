@@ -9,7 +9,7 @@ type CardProps = {
 
 const Card = ({name, url, text }: CardProps) => {
   return (
-    <div className="w-[300px] rounded-lg flex flex-col items-start border[0px] shadow-lg " >
+    <div className="w-[300px] rounded-lg flex flex-col items-start border[0px] shadow-lg mx-auto" >
         <img src={url} alt={text} className='bg-amber-200 rounded-xl' /> 
          <h2 className='flex justify-center text-xl font-semibold items-center gap-1.5 p-2'>{name}<Check color="#ffffff" className='bg-black rounded-full p-0 h-[20px] ' /> </h2>
       
