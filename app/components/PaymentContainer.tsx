@@ -59,7 +59,7 @@ const PaymentContainer = (props: any) => {
                 description: order_description
             },
             cancel_url: process.env.NEXT_PUBLIC_BASE_URL,
-            success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/upsell`,
+            success_url: `${process.env.NEXT_PUBLIC_BASE_URL}upsell`,
             customer: {
                 name: user.name + " " + user.surname,
             },
