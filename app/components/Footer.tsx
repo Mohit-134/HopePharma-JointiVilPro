@@ -12,12 +12,16 @@ const Footer = () => {
      {/* <div className="max-w-[1300px] mx-auto flex flex-wrap justify-center items-start gap-x-2 gap-y-5"> */}
 <div className="columns-[300px] space-y-4 max-w-[1300px] mx-auto ">
         {testimonials.map((testimonial, index) => (
-          <Card
+          
+          <div key={index} className="break-inside-avoid">
+             <Card 
             key={index}
             name={testimonial.name}
             url={testimonial.url}
             text={testimonial.text}
           />
+          </div>
+         
         ))}
       </div>
     </footer>
