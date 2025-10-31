@@ -21,7 +21,7 @@ export const bundles: Bundle[] = [
   {
     id: 1,
     label: "Buy 3 Get 2 Free",
-    originalPrice: 49783,
+    originalPrice: 599.8,
     price: 39.99,
     quantity: 5,  
     savings: "HIGH SAVING",
@@ -30,7 +30,7 @@ export const bundles: Bundle[] = [
   {
     id: 2,
     label: "Buy 2 Get 1 Free",
-    originalPrice: 29870,
+    originalPrice: 359.88,
     price: 53.99,
     quantity: 3,
     savings: "MOST POPULAR",
@@ -39,7 +39,7 @@ export const bundles: Bundle[] = [
   {
     id: 3,
     label: "Buy 1 Get 1 Free",
-    originalPrice: 19913,
+    originalPrice: 239.92,
     price: 59.99,
     quantity: 2,
     savings: "",

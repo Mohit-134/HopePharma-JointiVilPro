@@ -18,7 +18,6 @@ const ThankYou = () => {
     setIsModalOpen(true);
   };
 
-  // ✅ FIX: UseEffect to access localStorage safely
   useEffect(() => {
     const latestPackage = localStorage.getItem('latestPackage');
     const upsellPackage = localStorage.getItem('upsellPackage');
@@ -41,6 +40,16 @@ const ThankYou = () => {
       document.body.style.overflow = 'auto';
     };
   }, [isModalOpen]);
+
+  useEffect(() => {
+    // Track purchase event
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'Purchase', {
+        value: 10.00, // Add actual purchase value
+        currency: 'USD'
+      })
+    }
+  }, [])
 
   const Modal = ({ content, onClose }: any) => (
     <div className="fixed inset-0 z-50 flex justify-center items-center text-start">

@@ -86,6 +86,13 @@ export default function Checkout() {
     }));
   };
 
+  useEffect(() => {
+    // Track checkout event
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'InitiateCheckout')
+    }
+  }, [])
+  
  useEffect(() => {
     console.log("data", state);
     console.log("validation state", validationState);
