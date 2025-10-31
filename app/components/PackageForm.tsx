@@ -9,6 +9,7 @@ type PackageFormProps = {
     selectedBundleId: number;
     expeditedShipping: boolean;
     price: number;
+    quantity:number;
   };
   updateFields: (fields: any) => void;
 };
@@ -17,12 +18,16 @@ type PackageFormProps = {
 
 
 export default function PackageForm({ data, updateFields }: PackageFormProps) {
-  useEffect(() => {
-    const selected = bundles.find((b) => b.id === data.selectedBundleId);
-    if (selected) {
-      updateFields({ price: selected.price });
-    }
-  }, [data.selectedBundleId]);
+ useEffect(() => {
+  const selected = bundles.find((b) => b.id === data.selectedBundleId);
+  if (selected) {
+    updateFields({
+      price: selected.price,
+      quantity: selected.quantity,
+    });
+  }
+}, [data.selectedBundleId]);
+
 
   return (
     <div className=" rounded-lg p-6 shadow-lg min-w-[350px] ">
@@ -68,7 +73,8 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
                   />
                   <div className="flex items-center gap-2 ">
                     <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
-                      <Package className="w-6 h-6 text-gray-500" />
+                      {/* <Package className="w-6 h-6 text-gray-500" /> */}
+                      <img src="./images/bundel-3.webp" alt="" />
                     </div>
                     <div>
                       {bundle.savings && (

@@ -74,8 +74,8 @@ const ThankYou = () => {
             <span className="underline font-extrabold">deliver before then as well</span>
           </p>
         </div>
-
-        <div className="w-full p-4">
+      {/* {product receipt} */}
+        {/* <div className="w-full p-4">
           <div className="bg-[#eae4da] w-[100%] flex items-center gap-2 p-4 rounded-md mx-auto">
             <img className="h-[30px]" src="./images/check.webp" alt="" />
             <p className="text-start font-bold text-[#2f2f2f] text-2xl">Your Product Receipt:</p>
@@ -88,7 +88,7 @@ const ThankYou = () => {
             <p className="text-start text-sm font-bold text-[#2f2f2f]">Quantity</p>
             <p className="text-start text-sm font-bold text-gray-400">{totalQuantity}</p>
           </div>
-        </div>
+        </div> */}
 
         <div className="gap-0">
           <p className="text-2xl">For any support to your order, you can contact</p>

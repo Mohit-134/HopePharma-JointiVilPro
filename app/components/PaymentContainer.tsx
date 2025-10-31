@@ -35,7 +35,7 @@ const PaymentContainer = (props: any) => {
         setLoading(true);
 
         const order_number = `ORDER-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-        const order_amount = packageData.price + (packageData.expeditedShipping ? 10.0 : 0.0);
+        const order_amount = packageData.price * packageData.quantity + (packageData.expeditedShipping ? 10.0 : 0.0);
         console.log('Order Amount:', order_amount);
         const order_currency = "USD";
         const order_description = "Jointivil Purchase";
@@ -59,7 +59,7 @@ const PaymentContainer = (props: any) => {
                 description: order_description
             },
             cancel_url: process.env.NEXT_PUBLIC_BASE_URL,
-            success_url: `${process.env.NEXT_PUBLIC_BASE_URL}upsell`,
+            success_url: `${process.env.NEXT_PUBLIC_BASE_URL}thank-you`,
             customer: {
                 name: user.name + " " + user.surname,
             },
@@ -91,7 +91,7 @@ const PaymentContainer = (props: any) => {
             const data = await response.json();
             console.log('✅ Session created successfully:', data);
 
-            // ✅ Instead of redirecting, show the payment URL in an iframe
+            localStorage.setItem('latestPackage', JSON.stringify(packageData));
             if (data.redirect_url) {
                 window.location.href = data.redirect_url;
             } else {
@@ -152,7 +152,7 @@ const PaymentContainer = (props: any) => {
             };
             console.log("🔄 Updating client session with latest data...");
             updateClientSession();
-            localStorage.setItem('latestPackage', JSON.stringify(packageData));
+            // localStorage.setItem('latestPackage', JSON.stringify(packageData));
         }, 200);
 
         return () => clearTimeout(timeout);

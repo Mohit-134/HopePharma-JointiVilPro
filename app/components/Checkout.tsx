@@ -12,7 +12,7 @@ export default function Checkout() {
   const initialState = {
     package: {
       selectedBundleId: 3,
-      price: 199.99,
+      price: 59.99,
       expeditedShipping: false,
       originalPrice: 19913,
       quantity: 2,
@@ -41,6 +41,8 @@ export default function Checkout() {
     | { type: "UPDATE_SHIPMENT"; payload: Partial<State["shipment"]> };
 
   function reducer(state: State, action: Action): State {
+
+        console.log("updating package with", action.payload);
     switch (action.type) {
       case "UPDATE_PACKAGE":
         return {
