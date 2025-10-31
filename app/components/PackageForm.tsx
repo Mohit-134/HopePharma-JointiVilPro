@@ -105,7 +105,7 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
       </div>
 
       {/* Expedited Shipping */}
-      <div className="border-2 border-dashed  rounded-lg p-4 mb-6 bg-[#fbf8f3] flex flex-col">
+      {/* <div className="border-2 border-dashed  rounded-lg p-4 mb-6 bg-[#fbf8f3] flex flex-col">
         <div>
           <label className="flex items-center gap-3 cursor-pointer">
             <input
@@ -133,7 +133,7 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
 
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

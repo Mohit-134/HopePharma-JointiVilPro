@@ -25,17 +25,21 @@ const PaymentContainer = (props: any) => {
 
 
     const handleCustomButtonClick = async () => {
-     
+
         console.log('clicked custom button');
-        
-        if(shouldUpdateSession === false){
+
+        if (shouldUpdateSession === false) {
             document.getElementById('errorSection')?.scrollIntoView({ behavior: 'smooth' });
             return;
         }
         setLoading(true);
 
         const order_number = `ORDER-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-        const order_amount = packageData.price * packageData.quantity + (packageData.expeditedShipping ? 10.0 : 0.0);
+        const rawAmount = packageData.price * packageData.quantity + (packageData.expeditedShipping ? 10.0 : 0.0);
+
+        const order_amount = Number(rawAmount.toFixed(2));
+        console.log("quantity", packageData.quantity);
+        console.log("price", packageData.price);
         console.log('Order Amount:', order_amount);
         const order_currency = "USD";
         const order_description = "Jointivil Purchase";
@@ -224,15 +228,15 @@ const PaymentContainer = (props: any) => {
     return (
         <div className='w-full text-center'>
             {/* Payment button (unchanged) */}
-                <button
-                    onClick={handleCustomButtonClick}
-                    className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center hover:bg-[#ffdb28] transition-colors"
-                >
-                    <p className="font-bold">COMPLETE PURCHASE</p>
-                    <p>TRY IT RISK FREE! - 90 DAY MONEY BACK GUARANTEE!</p>
-                </button>
+            <button
+                onClick={handleCustomButtonClick}
+                className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center hover:bg-[#ffdb28] transition-colors"
+            >
+                <p className="font-bold">COMPLETE PURCHASE</p>
+                <p>TRY IT RISK FREE! - 90 DAY MONEY BACK GUARANTEE!</p>
+            </button>
 
-        
+
         </div>
     );
 }
