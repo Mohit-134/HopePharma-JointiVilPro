@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Clock, Globe } from "lucide-react";
 import { bundles } from "../constants/bundle";
 
@@ -14,17 +14,29 @@ type PackageFormProps = {
 };
 
 export default function PackageForm({ data, updateFields }: PackageFormProps) {
-  const [timeLeft, setTimeLeft] = useState(10 * 60); 
+  // const [timeLeft, setTimeLeft] = useState(10*60); 
 
+
+  // useEffect(() => {
+  //   if (timeLeft <= 0) return;
+  //   const timer = setInterval(() => {
+  //     setTimeLeft((prev) => prev - 1);
+  //   }, 1000);
+
+  //   return () => clearInterval(timer);
+  // }, [timeLeft]);
+  const [display, setDisplay] = useState("10:00");
+  const endTimeRef = useRef(Date.now() + 10 * 60 * 1000);
 
   useEffect(() => {
-    if (timeLeft <= 0) return;
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timeLeft]);
+  const tick = () => {
+    const diff = Math.max(0, endTimeRef.current - Date.now());
+    const seconds = Math.floor(diff / 1000);
+    setDisplay(formatTime(seconds));
+    if (seconds > 0) requestAnimationFrame(tick);
+  };
+  tick();
+}, []);
 
   
   const formatTime = (seconds: number) => {
@@ -60,7 +72,7 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
       <div className="bg-[#f8f8f8] border-solid border-1 rounded-lg p-4 mb-6 text-center">
         <div className="flex items-center justify-center gap-2 text-red-600 font-medium">
           <Clock className="w-5 h-5" />
-          LIMITED STOCK! Cart reserved for {formatTime(timeLeft)}
+          LIMITED STOCK! Cart reserved for {formatTime(display)}
         </div>
       </div>
 
