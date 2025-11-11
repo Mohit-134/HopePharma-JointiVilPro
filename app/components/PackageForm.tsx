@@ -14,39 +14,21 @@ type PackageFormProps = {
 };
 
 export default function PackageForm({ data, updateFields }: PackageFormProps) {
-  // const [timeLeft, setTimeLeft] = useState(10*60); 
+  const [timeLeft, setTimeLeft] = useState(10 * 60); 
 
-
-  // useEffect(() => {
-  //   if (timeLeft <= 0) return;
-  //   const timer = setInterval(() => {
-  //     setTimeLeft((prev) => prev - 1);
-  //   }, 1000);
-
-  //   return () => clearInterval(timer);
-  // }, [timeLeft]);
-  const [display, setDisplay] = useState("10:00");
-  const endTimeRef = useRef(Date.now() + 10 * 60 * 1000);
 
   useEffect(() => {
-  const tick = () => {
-    const diff = Math.max(0, endTimeRef.current - Date.now());
-    const seconds = Math.floor(diff / 1000);
-    setDisplay(formatTime(seconds));
-    if (seconds > 0) requestAnimationFrame(tick);
-  };
-  tick();
+  const timer = setInterval(() => {
+    setTimeLeft(prev => Math.max(prev - 1, 0));
+  }, 1000);
+  return () => clearInterval(timer);
 }, []);
 
-  
   const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
-    const s = (seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
-
+  const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+  const s = (seconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+};
   // Update price/quantity when bundle changes
   useEffect(() => {
     const selected = bundles.find((b) => b.id === data.selectedBundleId);
@@ -72,7 +54,7 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
       <div className="bg-[#f8f8f8] border-solid border-1 rounded-lg p-4 mb-6 text-center">
         <div className="flex items-center justify-center gap-2 text-red-600 font-medium">
           <Clock className="w-5 h-5" />
-          LIMITED STOCK! Cart reserved for {formatTime(display)}
+          LIMITED STOCK! Cart reserved for {formatTime(timeLeft)}
         </div>
       </div>
 
@@ -89,8 +71,7 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
           {bundles.map((bundle) => (
             <div
               key={bundle.id}
-              className={`border-2 h-[75px] rounded-lg cursor-pointer transition-all px-2 ${
-                data.selectedBundleId === bundle.id
+              className={`border-2 h-[120px]   rounded-lg cursor-pointer transition-all px-2 ${data.selectedBundleId === bundle.id 
                   ? "border-[#B88720]"
                   : "border-gray-200 hover:border-gray-300"
               } ${bundle.id === 1 ? "bg-[#ffff00] shadow-xl" : ""}`}
@@ -98,7 +79,7 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
                 updateFields({ selectedBundleId: bundle.id })
               }
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between w-full h-full px-2">
                 <div className="flex items-center gap-3">
                   <input
                     type="radio"
@@ -110,12 +91,12 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
                     className="w-4"
                   />
                   <div className="flex items-center gap-2">
-                    <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                    <div className="w-14 h-14 bg-gray-200 rounded flex items-center justify-center">
                       <img src="./images/bundel-3.webp" alt="" />
                     </div>
                     <div>
                       {bundle.savings && (
-                        <div className="text-[12px] font-semibold px-2 py-1 rounded inline-block text-[#f00000]">
+                        <div className="text-[14px] font-semibold px-2 py-1 rounded inline-block text-[#f00000]">
                           {bundle.savings}
                         </div>
                       )}

@@ -228,12 +228,12 @@ const PaymentContainer = (props: any) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="field">
                       <label htmlFor="payer_name" className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
-                      <input id="payer_name" type="text"  value={`${user.name} ${user.surname}`} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="John Doe" required />
+                      <input id="payer_name" type="text"  defaultValue={`${user.name} ${user.surname}`} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="John Doe" required />
                       <small className="text-red-500 text-xs mt-1 hidden" data-error-for="payer_name"></small>
                   </div>
                   <div className="field">
                       <label htmlFor="payer_email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                      <input id="payer_email" type="email"   value= {`${user.email}`} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="name@example.com" />
+                      <input id="payer_email" type="email"   defaultValue= {`${user.email}`} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="name@example.com" />
                       <small className="text-red-500 text-xs mt-1 hidden" data-error-for="payer_email"></small>
                   </div>
               </div>
