@@ -106,7 +106,7 @@ const PaymentContainer = (props: any) => {
           if (!logEl) return;
           const d = document.createElement("div");
           d.textContent = msg;
-          logEl.appendChild(d);
+        //   logEl.appendChild(d);
           console.log(msg);
       }
 
@@ -224,18 +224,17 @@ const PaymentContainer = (props: any) => {
                   </div>
               </div>
 
-              <h2 className="text-lg font-semibold text-gray-800 mt-4">Billing address</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="field">
-                      <label htmlFor="payer_name" className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
+                      <label htmlFor="payer_name" className="block text-sm  text-gray-700 mb-1 font-bold">Name On Card</label>
                       <input id="payer_name" type="text"  defaultValue={`${user.name} ${user.surname}`} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="John Doe" required />
                       <small className="text-red-500 text-xs mt-1 hidden" data-error-for="payer_name"></small>
                   </div>
-                  <div className="field">
+                  {/* <div className="field">
                       <label htmlFor="payer_email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                       <input id="payer_email" type="email"   defaultValue= {`${user.email}`} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="name@example.com" />
                       <small className="text-red-500 text-xs mt-1 hidden" data-error-for="payer_email"></small>
-                  </div>
+                  </div> */}
               </div>
 
               <button type="submit" disabled={isLoading} className="bg-[#ffd712] text-black font-semibold py-3 rounded-lg shadow-lg hover:bg-[#ffdb28] transition-all mt-4 disabled:opacity-50 disabled:cursor-not-allowed">
