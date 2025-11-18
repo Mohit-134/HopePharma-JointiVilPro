@@ -13,6 +13,7 @@ const PaymentContainer = (props: any) => {
     const [paymentStatus, setPaymentStatus] = useState("");
     const primerInitialized = useRef(false);
     const checkoutRef = useRef<PrimerCheckout | null>(null);
+    const [iframeUrl, setIframeUrl] = useState<string | null>(null);
 
     const {
         package: packageData,
@@ -77,8 +78,11 @@ const PaymentContainer = (props: any) => {
             },
             recurring_init: "true",
             req_token: "true",
+            url_target: "_parent",
+            form_id: "a8624832-bbc7-11f0-87be-0e55f62e89c8",
             hash: sha1Hash
         };
+
 
         console.log('🔹 Payload for session creation:', payload);
         try {
@@ -95,12 +99,26 @@ const PaymentContainer = (props: any) => {
             const data = await response.json();
             console.log('✅ Session created successfully:', data);
 
-            localStorage.setItem('latestPackage', JSON.stringify(packageData));
             if (data.redirect_url) {
-                window.location.href = data.redirect_url;
+                setIframeUrl(data.redirect_url);
             } else {
                 console.error("No redirect_url found in API response.");
             }
+
+            // const element = document.getElementById("payer_name");
+
+            // setTimeout(() => {
+            //     console.log(element, "***************************")
+            //     if (element) {
+            //         element.value = `${user.name} ${user.surname}`;
+            //     }
+            // }, 2000);
+            localStorage.setItem('latestPackage', JSON.stringify(packageData));
+            // if (data.redirect_url) {
+            //     window.location.href = data.redirect_url;
+            // } else {
+            //     console.error("No redirect_url found in API response.");
+            // }
 
         } catch (error) {
             console.error('❌ Error creating session:', error);
@@ -162,7 +180,14 @@ const PaymentContainer = (props: any) => {
         return () => clearTimeout(timeout);
     }, [shouldUpdateSession]);
 
+    //     useEffect(() => {
+    //         const element = document.getElementById("payer_name");
+    //         console.log(element, "***************************")
+    //         if (element) {
+    //             element.value = `${user.name} ${user.surname}`;
+    //         }
 
+    //  }, [iframeUrl])
     // 🔧 Helper: Fetch payment details (unchanged)
     const fetchPaymentDetails = async (paymentId: string) => {
         try {
@@ -228,15 +253,43 @@ const PaymentContainer = (props: any) => {
     return (
         <div className='w-full text-center'>
             {/* Payment button (unchanged) */}
-            <button
-                onClick={handleCustomButtonClick}
-                className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center hover:bg-[#ffdb28] transition-colors"
-            >
-                <p className="font-bold">COMPLETE PURCHASE</p>
-                <p>TRY IT RISK FREE! - 90 DAY MONEY BACK GUARANTEE!</p>
-            </button>
+            {!iframeUrl && (
+                <button
+                    onClick={handleCustomButtonClick}
+                    className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center hover:bg-[#ffdb28] transition-colors"
+                >
+                    <p className="font-bold">COMPLETE PURCHASE</p>
+                    <p>TRY IT RISK FREE! - 90 DAY MONEY BACK GUARANTEE!</p>
+                </button>
+            )}
 
+            {/* 🧩 Payment iframe (only shows when redirect_url exists) */}
+            {iframeUrl && (
+                <div className="mt-6">
+                    <iframe
+                        src={iframeUrl}
+                        width="100%"
+                        height="750"
+                        className="border rounded-lg shadow-md"
+                        allow="payment *; fullscreen"
 
+                        // onLoad={(e) => {
+                        //     setTimeout(() => {
+                        //         const iframe = e.target;
+                        //         try {
+                        //             const element = iframe.contentDocument.getElementById("payer_name");
+                        //             if (element) {
+                        //                 element.value = `${user.name} ${user.surname}`;
+                        //             }
+                        //         } catch (error) {
+                        //             console.error("Error accessing iframe content:", error);
+                        //         }
+                        //     }, 2000); 
+                        // }}
+
+                    />
+                </div>
+            )}
         </div>
     );
 }
