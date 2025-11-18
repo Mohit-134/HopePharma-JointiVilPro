@@ -42,7 +42,7 @@ export default function Checkout() {
 
   function reducer(state: State, action: Action): State {
 
-        console.log("updating package with", action.payload);
+    console.log("updating package with", action.payload);
     switch (action.type) {
       case "UPDATE_PACKAGE":
         return {
@@ -75,11 +75,10 @@ export default function Checkout() {
 
 
   const allFormsValid = validationState.package && validationState.user && validationState.shipment;
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-  }
 
-    const updateValidation = (form: keyof typeof validationState, isValid: boolean) => {
+
+
+  const updateValidation = (form: keyof typeof validationState, isValid: boolean) => {
     setValidationState(prev => ({
       ...prev,
       [form]: isValid
@@ -92,8 +91,8 @@ export default function Checkout() {
       window.fbq('track', 'InitiateCheckout')
     }
   }, [])
-  
- useEffect(() => {
+
+  useEffect(() => {
     console.log("data", state);
     console.log("validation state", validationState);
     console.log("all forms valid", allFormsValid);
@@ -106,7 +105,7 @@ export default function Checkout() {
     >
       <div className=" w-screen max-w-[1200px] mx-auto mb-10 pb-10  border-[0px] shadow-2xl flex flex-wrap items- justify-center gap-4  px-2 " >
 
-        <div className="  border-solid border-1 w-full  max-w-[575px] p-2">
+        <div className=" p-4 border-1 w-full min-w-[400px] max-w-[575px] ">
           <PackageForm
             data={state.package}
             updateFields={(fields) => { dispatch({ type: "UPDATE_PACKAGE", payload: fields }) }}
@@ -125,7 +124,7 @@ export default function Checkout() {
           ></ShipmentDetailsForm>
 
         </div>
-        <div className=" w-full max-w-[575px]  border-1 p-4 ">
+        <div className=" w-full max-w-[575px] min-w-[400px] border-1 p-4 ">
           <PaymentContainer
             package={state.package}
             user={state.user}
@@ -155,7 +154,7 @@ export default function Checkout() {
             <div className="relative bg-[#f0f2f5] p-4 rounded-lg col-span-9">
               <strong className="text-[#000000] text-[15px]">Ethan</strong>
               <p className="text-[#000000] text-[15px]">
-               After using jointiVil for a few weeks, I've noticed a significant improvement in my joint flexibility and a reduction in pain. It's been a game-changer for my daily activities, and I feel more mobile than ever!
+                After using jointiVil for a few weeks, I've noticed a significant improvement in my joint flexibility and a reduction in pain. It's been a game-changer for my daily activities, and I feel more mobile than ever!
               </p>
 
               {/* Overlapping like count */}
@@ -172,7 +171,7 @@ export default function Checkout() {
             <div className="relative bg-[#f0f2f5] p-4 rounded-lg col-span-9">
               <strong className="text-[#000000] text-[15px]">Ethan</strong>
               <p className="text-[#000000] text-[15px]">
-               JointiVil has helped ease the discomfort in my knees and joints. I'm now able to move with less pain, and my recovery after workouts is much faster. I highly recommend it to anyone dealing with joint issues!  
+                JointiVil has helped ease the discomfort in my knees and joints. I'm now able to move with less pain, and my recovery after workouts is much faster. I highly recommend it to anyone dealing with joint issues!
               </p>
 
               {/* Overlapping like count */}

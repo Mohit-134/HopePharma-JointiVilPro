@@ -4,7 +4,7 @@ import { Sun, Lock } from 'lucide-react';
 
 const Header = () => {
   return (
-    <div className='min-w-[370px] w-screen mb-4'>
+    <div className='min-w-[400px] w-screen mb-4'>
       <header className="bg-[#56766B] p-3 text-center text-white">
         <div className="flex items-center justify-center gap-2">
           <Sun className="h-5 w-5 text-amber-400" />
@@ -37,7 +37,7 @@ const Header = () => {
               </p>
             </div>
             <p className="text-xs text-gray-600 sm:text-sm">
-              Support: "abcexamople.con"
+              Support: "customerservice@hopepharma.online"
             </p>
           </div>
         </div>
