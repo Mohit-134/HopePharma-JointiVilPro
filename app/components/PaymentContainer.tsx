@@ -79,7 +79,7 @@ const PaymentContainer = (props: any) => {
             recurring_init: "true",
             req_token: "true",
             url_target: "_parent",
-            form_id: "a8624832-bbc7-11f0-87be-0e55f62e89c8",
+            // form_id: "a8624832-bbc7-11f0-87be-0e55f62e89c8",
             hash: sha1Hash
         };
 
@@ -130,54 +130,13 @@ const PaymentContainer = (props: any) => {
 
     // 🧠 Session update logic (unchanged)
     useEffect(() => {
-        if (!shouldUpdateSession || !clientToken) {
+        console.log(shouldUpdateSession , "******************")
+        if (!shouldUpdateSession) {
             console.log("⏸️ Skipping session update - forms not valid or no token");
             return;
         }
-        if (!clientToken) return;
-        const timeout = setTimeout(() => {
-            const updateClientSession = async () => {
-                try {
-                    const res = await fetch('/api/update-client-session', {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(
-                            {
-                                user,
-                                shipment,
-                                package: packageData,
-                                clientToken
-                            }
-                        ),
-                    });
-
-                    const data = await res.json();
-
-                    if (!res.ok) {
-                        console.error("❌ Failed to update client session:", data.error);
-                    } else {
-                        console.log("✅ Client session updated:", data.clientSession);
-                    }
-
-                } catch (error) {
-                    if (error instanceof Error) {
-                        setError(`Error fetching token: ${error.message}`);
-                    } else if (typeof error === 'string') {
-                        setError(`Error fetching token: ${error}`);
-                    } else {
-                        setError(`Error fetching token: An unknown error occurred`);
-                    }
-                    setLoading(false);
-                }
-            };
-            console.log("🔄 Updating client session with latest data...");
-            updateClientSession();
-            // localStorage.setItem('latestPackage', JSON.stringify(packageData));
-        }, 200);
-
-        return () => clearTimeout(timeout);
+       
+        handleCustomButtonClick();
     }, [shouldUpdateSession]);
 
     //     useEffect(() => {
