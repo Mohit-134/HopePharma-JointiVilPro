@@ -4,13 +4,13 @@ import { testimonials } from '../constants/testimonials';
 
 const Footer = () => {
   return (
-    <footer>
+    <footer className='min-w-[400px]'>
       <div className="bg-[#EAE4DA] h-[100px] my-10 flex items-center justify-center text-4xl font-semibold">
         <h1>More Trusted Customer Reviews</h1>
       </div>
 
      {/* <div className="max-w-[1300px] mx-auto flex flex-wrap justify-center items-start gap-x-2 gap-y-5"> */}
-<div className="columns-[300px] space-y-4 max-w-[1300px] mx-auto ">
+<div className="columns-[300px]  sm:space-y-4 max-w-[1300px] mx-auto ">
         {testimonials.map((testimonial, index) => (
           
           <div key={index} className="break-inside-avoid">

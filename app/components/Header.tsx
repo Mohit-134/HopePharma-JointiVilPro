@@ -20,7 +20,7 @@ const Header = () => {
           </p>
         </div>
       </header>
-      <div className="flex items-center justify-around px-3 sm:px-4  bg-[#E4EADA] ">
+      <div className="flex items-center justify-center px-3 sm:px-4  flex-wrap gap-4  bg-[#E4EADA] ">
         <img
           src="./images/header1.webp"
 
@@ -37,7 +37,7 @@ const Header = () => {
               </p>
             </div>
             <p className="text-xs text-gray-600 sm:text-sm">
-              Support: "customerservice@hopepharma.online"
+              Support: customerservice@hopepharma.online
             </p>
           </div>
         </div>
