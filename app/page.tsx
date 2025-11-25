@@ -12,9 +12,10 @@ declare global {
 export default function Home() {
   return (
     <>
-        <Header/>
-        <Checkout/>
-        <Footer/>
+    
+    <Checkout />
+    <Footer />
+
     </>
   )
 }

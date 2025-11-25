@@ -5,6 +5,7 @@ import UserDetailsForm from "./UserDetailsForm";
 import { Files, Lock } from "lucide-react";
 import PaymentContainer from "./PaymentContainer";
 import ShipmentDetailsForm from "./ShipmentDeatilsForm";
+import Header from "../components/Header";
 
 
 export default function Checkout() {
@@ -100,11 +101,11 @@ export default function Checkout() {
 
 
   return (
-    <div className=""
+    <div className="  w-screen min-w-[400px] overflow-x-hidden "
       style={{ display: "flex", flexDirection: "column", gap: 24 }}
     >
-      <div className=" w-screen max-w-[1200px] mx-auto mb-10 pb-10  border-[0px] shadow-2xl flex flex-wrap items- justify-center gap-4  px-2 " >
-
+      <div className=" w-[100%] max-w-[1200px] mx-auto mb-10 pb-10  border-[0px] shadow-2xl flex flex-wrap items- justify-center gap-4   bg-amber-60" >
+        <Header />
         <div className=" p-4 border-1 w-full min-w-[400px] max-w-[575px] ">
           <PackageForm
             data={state.package}
@@ -131,19 +132,16 @@ export default function Checkout() {
             shipment={state.shipment}
             shouldUpdateSession={allFormsValid}
           />
-          {/* <div className="bg-[#ffd712] h-[100px] w-full min-w-[340px] flex flex-col items-center justify-center gap-2 rounded-lg shadow-lg text-center">
-            <p className="font-bold">COMPLETE PURCHASE</p>
-            <p>TRY IT RISK FREE! - 90 DAY MONEY BACK GUARANTEE!</p>
-          </div> */}
+
           <p className="text-[#67697EE6]  text-[13px] text-center p-4">By completing the payment, the client is in agreement with our Terms of Service and Refund Policy.</p>
           <img className="w-[70%]  mx-auto" src="./images/payment-gateway.webp"></img>
-          <p className="flex gap-2 mx-auto justify-center my-6 text-[#303030] text-[13px] items-center"> <Lock color="#f7ef02" /> Secure 256-bit SSL encryption  </p>
-          <div className="grid grid-cols-5 gap-2 my-2 p-2 mx-auto min-w-[350px]">
-            <img className="col-span-1 h-[100px]" src="./images/guarantee-sticker.webp"></img>
-            <div className="col-span-4">
+          <p className="flex  mx-auto justify-center my-6 text-[#303030] text-[13px] items-center"> <Lock color="#f7ef02" /> Secure 256-bit SSL encryption  </p>
+          <div className="grid grid-cols-6 my-2 p-2 mx-auto gap-2  w-[100%]">
+            <img className="col-span-2 max-h-[130px]  " src="./images/guarantee-sticker.webp"></img>
+            <div className="col-span-4 w-[100%] ">
               <p className="text-[#303030] mb-1.5"><strong> 90 DAYS GUARANTEE</strong> </p>
               <p className="text-[#303030] text-[13px] tracking-tight">
-                If you are not completely thrilled with your jointiVil - we are offering you a 90 day guarantee on all purchases. Simply contact our customer support for a full refund or replacement.</p>
+                If you are not completely thrilled with your jointiVil - we are offering you a 90 day guarantee on all purchases. Simply contact  our customer support for a full refund or replacement.</p>
             </div>
           </div>
           {/* reviews */}
@@ -158,7 +156,7 @@ export default function Checkout() {
               </p>
 
               {/* Overlapping like count */}
-              <div className="absolute -bottom-3 left-[80%] tracking-widest bg-white px-3 py-1 rounded-lg text-[14px] shadow-md">
+              <div className=" min-w-[60x] absolute -bottom-3 left-[75%] sm:left-[80%] tracking-widest bg-white px-3 py-1 rounded-lg text-[14px] shadow-md">
                 27 <span className="tracking-tighter">👍❤️</span>
               </div>
             </div>
@@ -175,15 +173,18 @@ export default function Checkout() {
               </p>
 
               {/* Overlapping like count */}
-              <div className="absolute -bottom-3 left-[80%] tracking-widest bg-white px-3 py-1 rounded-lg text-[14px] shadow-md">
-                27 <span className="tracking-tighter">👍❤️</span>
+              <div className=" min-w-[60x] absolute -bottom-3 left-[75%] sm:left-[80%] tracking-widest bg-white px-3 py-1 rounded-lg text-[14px] shadow-md">
+                32 <span className="tracking-tighter">👍❤️</span>
               </div>
             </div>
           </div>
 
         </div>
       </div>
-
     </div>
   );
 }
+
+
+
+

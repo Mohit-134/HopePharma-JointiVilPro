@@ -51,9 +51,9 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
       </div>
 
       {/* Stock Warning with countdown timer */}
-      <div className="bg-[#f8f8f8] border-solid border-1 rounded-lg sm:p-4 mb-6 text-center">
+      <div className="bg-[#f8f8f8] border-solid border-1 rounded-lg p-4 mb-6 text-center">
         <div className="flex items-center justify-center gap-2 text-red-600 font-medium">
-          <Clock className="w-5 h-5" />
+          <Clock className="w- h-5 " />
           LIMITED STOCK! Cart reserved for {formatTime(timeLeft)}
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function PackageForm({ data, updateFields }: PackageFormProps) {
                   />
                   <div className="flex items-center gap-2">
                     <div className="w-22 h-14 bg-gray-200 rounded flex items-center justify-center">
-                      <img className="h-22 " src="./images/bundel-3.webp" alt="" />
+                      <img className="h-22 shadow-2xl rounded-lg" src="./images/bundel-3.webp" alt="" />
                     </div>
                     <div>
                       {bundle.savings && (

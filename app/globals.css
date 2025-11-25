@@ -4,27 +4,5 @@
 /* Default body font (optional override) */
 body {
   font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-  min-width: 400px;
   /* background: #000; */
-}
-
-/* Custom input style */
-.custom-input {
-  background-color: rgb(255, 255, 255);
-  border-radius: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.39);
-  color: rgb(37, 42, 50);
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
-  text-align: left;
-  font-weight: normal;
-  font-style: normal;
-  padding: 0.5rem 1rem; /* matches px-4 py-2 */
-  box-sizing: border-box;
-  transition: border-color 0.2s ease;
-}
-
-.custom-input:focus {
-  border-color: rgba(137, 20, 20, 0.92);
-  box-shadow: 0 0 0 3px rgba(137, 20, 20, 0.3);
 }

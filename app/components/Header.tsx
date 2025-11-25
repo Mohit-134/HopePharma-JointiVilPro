@@ -4,7 +4,7 @@ import { Sun, Lock } from 'lucide-react';
 
 const Header = () => {
   return (
-    <div className='min-w-[400px] w-screen mb-4'>
+    <div className='w-[100%] mb-4  overflow-x-hidden '>
       <header className="bg-[#56766B] p-3 text-center text-white">
         <div className="flex items-center justify-center gap-2">
           <Sun className="h-5 w-5 text-amber-400" />
@@ -20,7 +20,7 @@ const Header = () => {
           </p>
         </div>
       </header>
-      <div className="flex items-center justify-center px-3 sm:px-4  flex-wrap gap-4  bg-[#E4EADA] ">
+      <div className="flex items-center justify-center px-3 sm:px-4  flex-wrap gap-4  bg-[#E4EADA]  ">
         <img
           src="./images/header1.webp"
 
@@ -30,7 +30,7 @@ const Header = () => {
         <h1 className='font-bold text-2xl hidden md:block'> SECURE CHECKOUT</h1>
         <div className="flex items-center gap-2 sm:gap-6">
           <div className="text-right">
-            <div className="flex items-center justify-end gap-1 mb-1">
+            <div className="flex items-center justify-end gap-1 mb-1 ">
               <Lock className="h-3 w-3 text-emerald-600" />
               <p className="text-xs font-medium text-gray-700 sm:text-sm">
                 Secure Checkout
