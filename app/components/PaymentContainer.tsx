@@ -79,7 +79,7 @@ const PaymentContainer = (props: any) => {
             recurring_init: "true",
             req_token: "true",
             url_target: "_parent",
-            // form_id: "a8624832-bbc7-11f0-87be-0e55f62e89c8",
+            form_id: "3901e7aa-c706-11f0-b8ef-f60c18a2f660",
             hash: sha1Hash
         };
 

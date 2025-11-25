@@ -5,7 +5,7 @@
 body {
   font-family: 'Open Sans', Arial, Helvetica, sans-serif;
   min-width: 400px;
-  background: #000;
+  /* background: #000; */
 }
 
 /* Custom input style */
